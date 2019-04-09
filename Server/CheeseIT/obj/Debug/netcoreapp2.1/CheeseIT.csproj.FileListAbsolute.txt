@@ -1,0 +1,14 @@
+D:\Repos\cheeseIT\Server\CheeseIT\bin\Debug\netcoreapp2.1\CheeseIT.deps.json
+D:\Repos\cheeseIT\Server\CheeseIT\bin\Debug\netcoreapp2.1\CheeseIT.runtimeconfig.json
+D:\Repos\cheeseIT\Server\CheeseIT\bin\Debug\netcoreapp2.1\CheeseIT.runtimeconfig.dev.json
+D:\Repos\cheeseIT\Server\CheeseIT\bin\Debug\netcoreapp2.1\CheeseIT.dll
+D:\Repos\cheeseIT\Server\CheeseIT\bin\Debug\netcoreapp2.1\CheeseIT.pdb
+D:\Repos\cheeseIT\Server\CheeseIT\obj\Debug\netcoreapp2.1\CheeseIT.csprojAssemblyReference.cache
+D:\Repos\cheeseIT\Server\CheeseIT\obj\Debug\netcoreapp2.1\CheeseIT.csproj.CoreCompileInputs.cache
+D:\Repos\cheeseIT\Server\CheeseIT\obj\Debug\netcoreapp2.1\CheeseIT.RazorAssemblyInfo.cache
+D:\Repos\cheeseIT\Server\CheeseIT\obj\Debug\netcoreapp2.1\CheeseIT.RazorAssemblyInfo.cs
+D:\Repos\cheeseIT\Server\CheeseIT\obj\Debug\netcoreapp2.1\CheeseIT.AssemblyInfoInputs.cache
+D:\Repos\cheeseIT\Server\CheeseIT\obj\Debug\netcoreapp2.1\CheeseIT.AssemblyInfo.cs
+D:\Repos\cheeseIT\Server\CheeseIT\obj\Debug\netcoreapp2.1\CheeseIT.RazorTargetAssemblyInfo.cache
+D:\Repos\cheeseIT\Server\CheeseIT\obj\Debug\netcoreapp2.1\CheeseIT.dll
+D:\Repos\cheeseIT\Server\CheeseIT\obj\Debug\netcoreapp2.1\CheeseIT.pdb
