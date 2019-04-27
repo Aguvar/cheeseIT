@@ -15,7 +15,6 @@ namespace CheeseIT.Models
         }
 
         public DbSet<Cheese> Cheeses { get; set; }
-
         public DbSet<Ripening> Ripenings { get; set; }
         public DbSet<Experiment> Experiments { get; set; }
 
