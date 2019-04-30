@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CheeseIT.Models;
+using Microsoft.Extensions.Logging;
+using CheeseIT.DTOs;
 
 namespace CheeseIT.Controllers
 {
@@ -14,10 +16,12 @@ namespace CheeseIT.Controllers
     public class RipeningsController : ControllerBase
     {
         private readonly CheeseContext _context;
+        private readonly ILogger<RipeningsController> _logger;
 
-        public RipeningsController(CheeseContext context)
+        public RipeningsController(CheeseContext context, ILogger<RipeningsController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         // GET: api/Ripenings
@@ -33,6 +37,16 @@ namespace CheeseIT.Controllers
         public async Task<ActionResult<Ripening>> GetCurrentRipening()
         {
             return await _context.Ripenings.Where(r => r.EndTime == null).FirstOrDefaultAsync();
+        }
+
+        // POST: api/Ripenings/measure
+        [HttpPost]
+        [Route("measure")]
+        public ActionResult<string> PostMeasure([FromBody] Measurement measure)
+        {
+            _logger.LogInformation($"Humedad: {measure.Humidity.ToString()}");
+            _logger.LogInformation($"Temperatura: {measure.Temperature.ToString()}");
+            return "Recibido";
         }
 
         // GET: api/Ripenings/5
