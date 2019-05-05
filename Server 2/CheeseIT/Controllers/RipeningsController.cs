@@ -1,13 +1,12 @@
-﻿using System;
+﻿using CheeseIT.BusinessLogic;
+using CheeseIT.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CheeseIT.Models;
-using Microsoft.Extensions.Logging;
-using CheeseIT.DTOs;
 
 namespace CheeseIT.Controllers
 {
@@ -17,16 +16,17 @@ namespace CheeseIT.Controllers
     {
         private readonly CheeseContext _context;
         private readonly ILogger<RipeningsController> _logger;
+        private readonly RipeningServices _ripeningServices;
 
         public RipeningsController(CheeseContext context, ILogger<RipeningsController> logger)
         {
             _context = context;
             _logger = logger;
+            _ripeningServices = new RipeningServices(_context);
         }
 
         // GET: api/Ripenings
         [HttpGet]
-        [Route("current")]
         public async Task<ActionResult<IEnumerable<Ripening>>> GetRipenings()
         {
             return await _context.Ripenings.ToListAsync();
@@ -34,18 +34,37 @@ namespace CheeseIT.Controllers
 
         // GET: api/Ripenings/current
         [HttpGet]
+        [Route("current")]
         public async Task<ActionResult<Ripening>> GetCurrentRipening()
         {
-            return await _context.Ripenings.Where(r => r.EndTime == null).FirstOrDefaultAsync();
+            //TODO: Solucionar temilla de eager loading y lazy loading para que traiga los quesos y las mediciones
+            return await _ripeningServices.GetCurrentRipeningModel();
         }
+
+
 
         // POST: api/Ripenings/measure
         [HttpPost]
         [Route("measure")]
-        public ActionResult<string> PostMeasure([FromBody] Measurement measure)
+        public async Task<ActionResult<string>> PostMeasure([FromBody] Measurement measure)
         {
             _logger.LogInformation($"Humedad: {measure.Humidity.ToString()}");
             _logger.LogInformation($"Temperatura: {measure.Temperature.ToString()}");
+
+            Ripening currentRipening = await _ripeningServices.GetCurrentRipeningModel();
+            measure.DateTime = DateTime.Now;
+            currentRipening.Measurements.Add(measure);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+
+                return NotFound();
+            }
+
             return "Recibido";
         }
 
@@ -95,12 +114,44 @@ namespace CheeseIT.Controllers
 
         // POST: api/Ripenings
         [HttpPost]
-        public async Task<ActionResult<Ripening>> PostRipening(Ripening ripening)
+        public async Task<ActionResult<Ripening>> PostRipening(string cheeseId)
         {
+            //TODO: Agregar manejo de excepciones para cuando no se encuentra un queso, y ver que pasa cuando intento crear un ripening si ya hay otro en curso
+            Guid cheeseGuid = Guid.Parse(cheeseId);
+            Ripening ripening = _ripeningServices.CreateRipening(cheeseGuid);
             _context.Ripenings.Add(ripening);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetRipening", new { id = ripening.Id }, ripening);
+        }
+
+        [HttpPut]
+        [Route("{ripeningId}/end")]
+        public async Task<IActionResult> EndRipening(string ripeningId)
+        {
+            //TODO: Manejar el caso donde el id del ripening no existe
+            Ripening ripening = _ripeningServices.FinishRipening(Guid.Parse(ripeningId));
+
+            _context.Entry(ripening).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                //Tirar esto al principio
+                if (!RipeningExists(Guid.Parse(ripeningId)))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
         }
 
         //// DELETE: api/Ripenings/5

@@ -14,5 +14,10 @@ namespace CheeseIT.Models
 
         public DateTime StartDate { get; set; }
         public DateTime EndTime { get; set; }
+
+        public Ripening()
+        {
+            Measurements = new List<Measurement>();
+        }
     }
 }

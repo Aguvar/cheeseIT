@@ -27,6 +27,13 @@ namespace CheeseIT.Controllers
             return await _context.Cheeses.ToListAsync();
         }
 
+        [HttpGet]
+        [Route("test")]
+        public  ActionResult<string> GetTest()
+        {
+            return "Hola oreo";
+        }
+
         // GET: api/Cheese/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Cheese>> GetCheese(Guid id)
