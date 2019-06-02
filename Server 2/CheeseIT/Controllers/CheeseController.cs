@@ -1,12 +1,11 @@
-﻿using System;
+﻿using CheeseIT.BusinessLogic;
+using CheeseIT.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CheeseIT.Models;
-using CheeseIT.BusinessLogic;
 
 namespace CheeseIT.Controllers
 {
@@ -32,7 +31,7 @@ namespace CheeseIT.Controllers
 
         [HttpGet]
         [Route("test")]
-        public  ActionResult<string> GetTest()
+        public ActionResult<string> GetTest()
         {
             return "Hola oreo";
         }
@@ -85,7 +84,11 @@ namespace CheeseIT.Controllers
         [HttpPost]
         public async Task<ActionResult<Cheese>> PostCheese(Cheese cheese)
         {
-            string filepath = _cheeseServices.ProcessImage(cheese.Base64Image);
+            string filepath = "";
+            if (!string.IsNullOrWhiteSpace(cheese.Base64Image))
+            {
+                filepath = _cheeseServices.ProcessImage(cheese.Base64Image);
+            }
             cheese.Base64Image = filepath;
             _context.Cheeses.Add(cheese);
             await _context.SaveChangesAsync();
