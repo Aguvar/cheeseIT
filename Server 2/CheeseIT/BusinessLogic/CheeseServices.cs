@@ -24,7 +24,7 @@ namespace CheeseIT.BusinessLogic
 
             var uploadParams = new ImageUploadParams()
             {
-                File = new FileDescription(base64Image)
+                File = new FileDescription($"data:image/jpg;base64,{base64Image}")
             };
             var uploadResult = cloudinary.Upload(uploadParams);
 
