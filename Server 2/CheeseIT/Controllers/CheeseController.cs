@@ -85,8 +85,8 @@ namespace CheeseIT.Controllers
         [HttpPost]
         public async Task<ActionResult<Cheese>> PostCheese(Cheese cheese)
         {
-            string filepath = _cheeseServices.ProcessImage(cheese.Base64Image);
-            cheese.Base64Image = filepath;
+            // string filepath = _cheeseServices.ProcessImage(cheese.Base64Image);
+            cheese.Base64Image = String.Empty;
             _context.Cheeses.Add(cheese);
             await _context.SaveChangesAsync();
 
