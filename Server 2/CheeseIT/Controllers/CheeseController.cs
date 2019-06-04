@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CheeseIT.BusinessLogic;
+using CheeseIT.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using CheeseIT.Models;
 
 namespace CheeseIT.Controllers
 {
@@ -14,10 +14,12 @@ namespace CheeseIT.Controllers
     public class CheeseController : ControllerBase
     {
         private readonly CheeseContext _context;
+        private readonly CheeseServices _cheeseServices;
 
         public CheeseController(CheeseContext context)
         {
             _context = context;
+            _cheeseServices = new CheeseServices();
         }
 
         // GET: api/Cheese
@@ -29,7 +31,7 @@ namespace CheeseIT.Controllers
 
         [HttpGet]
         [Route("test")]
-        public  ActionResult<string> GetTest()
+        public ActionResult<string> GetTest()
         {
             return "Hola oreo";
         }
@@ -82,6 +84,12 @@ namespace CheeseIT.Controllers
         [HttpPost]
         public async Task<ActionResult<Cheese>> PostCheese(Cheese cheese)
         {
+            string filepath = "";
+            if (!string.IsNullOrWhiteSpace(cheese.Base64Image))
+            {
+                filepath = _cheeseServices.ProcessImage(cheese.Base64Image);
+            }
+            cheese.Base64Image = filepath;
             _context.Cheeses.Add(cheese);
             await _context.SaveChangesAsync();
 
