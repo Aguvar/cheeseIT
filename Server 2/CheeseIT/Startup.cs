@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CheeseIT.BusinessLogic;
+using CheeseIT.BusinessLogic.Interfaces;
 using CheeseIT.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +31,7 @@ namespace CheeseIT
             string connection = Environment.GetEnvironmentVariable("CONNECTION_STRING");
             services.AddDbContext<CheeseContext>(options => options.UseSqlServer(Configuration.GetConnectionString("SqlConnection")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddSingleton<IMobileMessagingService, MobileMessagingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
