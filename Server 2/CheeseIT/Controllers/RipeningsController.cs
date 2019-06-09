@@ -1,4 +1,5 @@
 ﻿using CheeseIT.BusinessLogic;
+using CheeseIT.BusinessLogic.Interfaces;
 using CheeseIT.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +17,13 @@ namespace CheeseIT.Controllers
     {
         private readonly CheeseContext _context;
         private readonly ILogger<RipeningsController> _logger;
-        private readonly RipeningServices _ripeningServices;
+        private readonly IRipeningServices _ripeningServices;
 
-        public RipeningsController(CheeseContext context, ILogger<RipeningsController> logger)
+        public RipeningsController(CheeseContext context, ILogger<RipeningsController> logger, IRipeningServices services)
         {
             _context = context;
             _logger = logger;
-            _ripeningServices = new RipeningServices(_context);
+            _ripeningServices = services;
         }
 
         // GET: api/Ripenings
@@ -64,6 +65,9 @@ namespace CheeseIT.Controllers
 
                 return NotFound();
             }
+
+            //Revisar si la medida actual esta dentro de lo estandar
+            _ripeningServices.ValidateMeasure(measure);
 
             return "Recibido";
         }
