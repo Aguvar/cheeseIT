@@ -9,6 +9,7 @@ namespace CheeseIT.BusinessLogic
 {
     public class RipeningServices : IRipeningServices
     {
+        private readonly string _defaultToken = "cwln3Z2MWFo:APA91bHejttas_XngT6GydOXcFYXsywgeYJTJAtv-_7WMBsSMSNEsKu3j3obuiRpXtwADo5i3ViyX76rAPFDJXd3v4P8BA1aW2mvBSxoTGrbBvx4EIdnBCNsauorC6zrTFf0YSSZ3oJg";
         private readonly CheeseContext _context;
         private readonly IMobileMessagingService _messaging;
 
@@ -25,14 +26,14 @@ namespace CheeseIT.BusinessLogic
                 StartDate = DateTime.Now
             };
             Cheese cheese = _context.Cheeses.Find(cheeseId);
-            ripening.Cheese = cheese;
+            ripening.Cheese = cheese ?? throw new EntityNotFoundException($"Could not find entity 'Cheese' for Id {cheeseId}");
 
             return ripening;
         }
 
         public Ripening FinishRipening(Guid ripeningId)
         {
-            Ripening ripening = _context.Ripenings.Find(ripeningId);
+            Ripening ripening = _context.Ripenings.Find(ripeningId) ?? throw new EntityNotFoundException($"Could not find entity 'Ripening' for Id {ripeningId}");
             ripening.EndTime = DateTime.Now;
 
             return ripening;
@@ -40,7 +41,7 @@ namespace CheeseIT.BusinessLogic
 
         public async Task<Ripening> GetCurrentRipeningModel()
         {
-            return await _context.Ripenings.Include(rip => rip.Measurements).Include(rip => rip.Cheese).Where(r => r.EndTime == DateTime.MinValue).FirstOrDefaultAsync();
+            return await _context.Ripenings.Include(rip => rip.Measurements).Include(rip => rip.Cheese).Where(r => r.EndTime == null).FirstOrDefaultAsync();
         }
 
         public void ValidateMeasure(Measurement measure)
@@ -66,12 +67,10 @@ namespace CheeseIT.BusinessLogic
                 if (!string.IsNullOrEmpty(token))
                 {
                     _messaging.SendNotification(token, "Alerta de Medicion", message);
-
                 }
                 else
                 {
-                    _messaging.SendNotification("cwln3Z2MWFo:APA91bHejttas_XngT6GydOXcFYXsywgeYJTJAtv-_7WMBsSMSNEsKu3j3obuiRpXtwADo5i3ViyX76rAPFDJXd3v4P8BA1aW2mvBSxoTGrbBvx4EIdnBCNsauorC6zrTFf0YSSZ3oJg", "Alerta de Medicion", message);
-
+                    _messaging.SendNotification(_defaultToken, "Alerta de Medicion", message);
                 }
 
             }

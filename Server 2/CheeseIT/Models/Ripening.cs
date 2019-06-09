@@ -13,7 +13,7 @@ namespace CheeseIT.Models
         public IList<Measurement> Measurements { get; set; }
 
         public DateTime StartDate { get; set; }
-        public DateTime EndTime { get; set; }
+        public DateTime? EndTime { get; set; }
 
         public Ripening()
         {
