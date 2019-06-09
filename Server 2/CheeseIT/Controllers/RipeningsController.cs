@@ -114,9 +114,10 @@ namespace CheeseIT.Controllers
 
         // POST: api/Ripenings
         [HttpPost]
-        public async Task<ActionResult<Ripening>> PostRipening(string cheeseId)
+        public async Task<ActionResult<Ripening>> PostRipening([FromBody] string cheeseId)
         {
-            //TODO: Agregar manejo de excepciones para cuando no se encuentra un queso, y ver que pasa cuando intento crear un ripening si ya hay otro en curso
+            // TODO: Agregar manejo de excepciones para cuando no se encuentra un queso,
+            // y ver que pasa cuando intento crear un ripening si ya hay otro en curso
             Guid cheeseGuid = Guid.Parse(cheeseId);
             Ripening ripening = _ripeningServices.CreateRipening(cheeseGuid);
             _context.Ripenings.Add(ripening);
