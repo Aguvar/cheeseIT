@@ -25,14 +25,14 @@ namespace CheeseIT.BusinessLogic
                 StartDate = DateTime.Now
             };
             Cheese cheese = _context.Cheeses.Find(cheeseId);
-            ripening.Cheese = cheese;
+            ripening.Cheese = cheese ?? throw new EntityNotFoundException($"Could not find entity 'Cheese' for Id {cheeseId}");
 
             return ripening;
         }
 
         public Ripening FinishRipening(Guid ripeningId)
         {
-            Ripening ripening = _context.Ripenings.Find(ripeningId);
+            Ripening ripening = _context.Ripenings.Find(ripeningId) ?? throw new EntityNotFoundException($"Could not find entity 'Ripening' for Id {ripeningId}");
             ripening.EndTime = DateTime.Now;
 
             return ripening;
@@ -40,7 +40,7 @@ namespace CheeseIT.BusinessLogic
 
         public async Task<Ripening> GetCurrentRipeningModel()
         {
-            return await _context.Ripenings.Include(rip => rip.Measurements).Include(rip => rip.Cheese).Where(r => r.EndTime == DateTime.MinValue).FirstOrDefaultAsync();
+            return await _context.Ripenings.Include(rip => rip.Measurements).Include(rip => rip.Cheese).Where(r => r.EndTime == null).FirstOrDefaultAsync();
         }
 
         public void ValidateMeasure(Measurement measure)
