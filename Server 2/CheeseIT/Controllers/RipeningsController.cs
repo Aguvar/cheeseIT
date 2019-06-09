@@ -45,7 +45,7 @@ namespace CheeseIT.Controllers
             }
             else
             {
-                return StatusCode(412, "There is no current ripening");
+                return StatusCode(412, "There is no active ripening");
             }
         }
 
@@ -61,7 +61,7 @@ namespace CheeseIT.Controllers
 
             if (currentRipening == null)
             {
-                return StatusCode(412, "There is no current ripening");
+                return StatusCode(412, "There is no active ripening");
             }
 
             measure.DateTime = DateTime.Now;
