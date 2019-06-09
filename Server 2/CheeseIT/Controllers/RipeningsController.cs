@@ -38,7 +38,7 @@ namespace CheeseIT.Controllers
         [Route("current")]
         public async Task<ActionResult<Ripening>> GetCurrentRipening()
         {
-            Ripening ripening = await _ripeningServices.GetCurrentRipeningModel();
+            Ripening ripening = await _ripeningServices.GetCurrentRipening();
             if (ripening != null)
             {
                 return ripening;
@@ -57,7 +57,7 @@ namespace CheeseIT.Controllers
             _logger.LogInformation($"Humedad: {measure.Humidity.ToString()}");
             _logger.LogInformation($"Temperatura: {measure.Temperature.ToString()}");
 
-            Ripening currentRipening = await _ripeningServices.GetCurrentRipeningModel();
+            Ripening currentRipening = await _ripeningServices.GetCurrentRipening();
 
             if (currentRipening == null)
             {
@@ -131,7 +131,7 @@ namespace CheeseIT.Controllers
         [HttpPost]
         public async Task<ActionResult<Ripening>> PostRipening([FromBody] string cheeseId)
         {
-            if (_ripeningServices.GetCurrentRipeningModel() == null)
+            if (_ripeningServices.GetCurrentRipening() == null)
             {
                 return StatusCode(412, "There is an ongoing ripening already. Please end the previous one before starting a new one");
             }

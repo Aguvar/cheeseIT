@@ -13,12 +13,11 @@ namespace CheeseIT.Controllers
     public class NotificationController : ControllerBase
     {
         [HttpPost]
-        public HttpResponse PostFirebaseToken([FromBody] dynamic post)
+        public ActionResult PostFirebaseToken([FromBody] dynamic post)
         {
             TokenRepository.GetInstance().FirebaseToken = post.token.Value;
 
-            Response.StatusCode = 200;
-            return Response;
+            return Ok();
         }
     }
 }
