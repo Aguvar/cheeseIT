@@ -77,7 +77,7 @@ namespace CheeseIT.Controllers
                 return NotFound();
             }
 
-            //Revisar si la medida actual esta dentro de lo estandar
+            //Check if current measure is in accepted deviation
             _ripeningServices.ValidateMeasure(measure);
 
             return Created("measure", measure);
@@ -87,7 +87,7 @@ namespace CheeseIT.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Ripening>> GetRipening(Guid id)
         {
-            var ripening = await _context.Ripenings.FindAsync(id);
+            var ripening = await _context.Ripenings.Include(rip => rip.Cheese).Include(rip => rip.Measurements).Where(rip => rip.Id.Equals(id)).FirstOrDefaultAsync();
 
             if (ripening == null)
             {
@@ -129,15 +129,15 @@ namespace CheeseIT.Controllers
 
         // POST: api/Ripenings
         [HttpPost]
-        public async Task<ActionResult<Ripening>> PostRipening([FromBody] string cheeseId)
+        public async Task<ActionResult<Ripening>> PostRipening([FromBody] dynamic body)
         {
-            if (_ripeningServices.GetCurrentRipening() == null)
+            if (await _ripeningServices.GetCurrentRipening() != null)
             {
                 return StatusCode(412, "There is an ongoing ripening already. Please end the previous one before starting a new one");
             }
             try
             {
-                Guid cheeseGuid = Guid.Parse(cheeseId);
+                Guid cheeseGuid = Guid.Parse(body.cheeseId.Value);
                 Ripening ripening = _ripeningServices.CreateRipening(cheeseGuid);
 
                 _context.Ripenings.Add(ripening);

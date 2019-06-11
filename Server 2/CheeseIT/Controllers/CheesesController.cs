@@ -12,18 +12,18 @@ namespace CheeseIT.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CheeseController : ControllerBase
+    public class CheesesController : ControllerBase
     {
         private readonly CheeseContext _context;
         private readonly ICloudinaryServices _cloudinaryServices;
 
-        public CheeseController(CheeseContext context, ICloudinaryServices cloudinaryServices)
+        public CheesesController(CheeseContext context, ICloudinaryServices cloudinaryServices)
         {
             _context = context;
             _cloudinaryServices = cloudinaryServices;
         }
 
-        // GET: api/Cheese
+        // GET: api/Cheeses
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cheese>>> GetCheeses()
         {
@@ -37,7 +37,7 @@ namespace CheeseIT.Controllers
             return "Hola oreo";
         }
 
-        // GET: api/Cheese/5
+        // GET: api/Cheeses/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Cheese>> GetCheese(Guid id)
         {
@@ -51,7 +51,7 @@ namespace CheeseIT.Controllers
             return cheese;
         }
 
-        // PUT: api/Cheese/5
+        // PUT: api/Cheeses/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCheese(Guid id, Cheese cheese)
         {
@@ -81,7 +81,7 @@ namespace CheeseIT.Controllers
             return NoContent();
         }
 
-        // POST: api/Cheese
+        // POST: api/Cheeses
         [HttpPost]
         public async Task<ActionResult<Cheese>> PostCheese(Cheese cheese)
         {
@@ -97,7 +97,7 @@ namespace CheeseIT.Controllers
             return CreatedAtAction("GetCheese", new { id = cheese.Id }, cheese);
         }
 
-        // DELETE: api/Cheese/5
+        // DELETE: api/Cheeses/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Cheese>> DeleteCheese(Guid id)
         {

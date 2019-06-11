@@ -20,8 +20,7 @@ namespace CheeseIT.BusinessLogic
 
             Cloudinary cloudinary = new Cloudinary(account);
 
-            //Save it to azure blob storage or locally or in Cloudinary
-
+            //Save it in Cloudinary
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription($"data:image/jpg;base64,{base64Image}")

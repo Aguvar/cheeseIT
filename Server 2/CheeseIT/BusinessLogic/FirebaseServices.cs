@@ -9,6 +9,8 @@ namespace CheeseIT.BusinessLogic
     public class MobileMessagingService : IMobileMessagingService
     {
         private readonly FirebaseMessaging messaging;
+        private readonly string _defaultToken = "cwln3Z2MWFo:APA91bHejttas_XngT6GydOXcFYXsywgeYJTJAtv-_7WMBsSMSNEsKu3j3obuiRpXtwADo5i3ViyX76rAPFDJXd3v4P8BA1aW2mvBSxoTGrbBvx4EIdnBCNsauorC6zrTFf0YSSZ3oJg";
+
 
         public MobileMessagingService()
         {
@@ -35,8 +37,12 @@ namespace CheeseIT.BusinessLogic
 
         public async Task SendNotification(string token, string title, string body)
         {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                token = _defaultToken;
+            }
+
             var result = await messaging.SendAsync(CreateNotification(title, body, token));
-            //do something with result
         }
 
     }

@@ -9,7 +9,6 @@ namespace CheeseIT.BusinessLogic
 {
     public class ExperimentServices : IExperimentServices
     {
-        private readonly string _defaultToken = "cwln3Z2MWFo:APA91bHejttas_XngT6GydOXcFYXsywgeYJTJAtv-_7WMBsSMSNEsKu3j3obuiRpXtwADo5i3ViyX76rAPFDJXd3v4P8BA1aW2mvBSxoTGrbBvx4EIdnBCNsauorC6zrTFf0YSSZ3oJg";
         private readonly CheeseContext _context;
         private readonly IMobileMessagingService _messaging;
 
@@ -33,26 +32,19 @@ namespace CheeseIT.BusinessLogic
 
             if (Math.Abs(measure.Humidity - currentExperiment.IdealHumidity) > currentExperiment.HumidityThreshold)
             {
-                message += $"Se ha registrado una humedad {(measure.Humidity - currentExperiment.IdealHumidity) - currentExperiment.HumidityThreshold}% por fuera del rango establecido. \n";
+                message += $"Se ha registrado una humedad {(measure.Humidity - currentExperiment.IdealHumidity) - currentExperiment.HumidityThreshold}% por fuera del rango establecido. Para el experimento actual\n";
             }
 
             if (Math.Abs(measure.Temperature - currentExperiment.IdealTemperature) > currentExperiment.TemperatureThreshold)
             {
-                message += $"Se ha registrado una temperatura {(measure.Temperature - currentExperiment.IdealTemperature) - currentExperiment.TemperatureThreshold}°C por fuera del rango establecido. \n";
+                message += $"Se ha registrado una temperatura {(measure.Temperature - currentExperiment.IdealTemperature) - currentExperiment.TemperatureThreshold}°C por fuera del rango establecido. Para el experimento actual. \n";
             }
 
             if (!string.IsNullOrEmpty(message))
             {
                 string token = TokenRepository.GetInstance().FirebaseToken;
-                if (!string.IsNullOrEmpty(token))
-                {
-                    _messaging.SendNotification(token, "Alerta de Medicion", message);
-                }
-                else
-                {
-                    _messaging.SendNotification(_defaultToken, "Alerta de Medicion", message);
-                }
 
+                _messaging.SendNotification(token, "Alerta de Medicion", message);
             }
         }
 

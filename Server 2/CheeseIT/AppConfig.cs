@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CheeseIT.BusinessLogic
+namespace CheeseIT
 {
-    public class CheeseLogic
+    public class AppConfig
     {
-
+        public string DefaultFirebaseToken { get; set; }
     }
 }
