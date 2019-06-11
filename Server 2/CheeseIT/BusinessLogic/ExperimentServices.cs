@@ -16,6 +16,7 @@ namespace CheeseIT.BusinessLogic
         public ExperimentServices(CheeseContext context, IMobileMessagingService mobileMessagingService)
         {
             _context = context;
+            _messaging = mobileMessagingService;
         }
 
         public async Task<Experiment> GetCurrentExperiment()
@@ -42,7 +43,6 @@ namespace CheeseIT.BusinessLogic
 
             if (!string.IsNullOrEmpty(message))
             {
-                Console.WriteLine("Se deberia haber mandado una notificacion");
                 string token = TokenRepository.GetInstance().FirebaseToken;
                 if (!string.IsNullOrEmpty(token))
                 {

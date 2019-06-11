@@ -1,4 +1,5 @@
 ﻿using CheeseIT.BusinessLogic;
+using CheeseIT.BusinessLogic.Interfaces;
 using CheeseIT.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +15,12 @@ namespace CheeseIT.Controllers
     public class CheeseController : ControllerBase
     {
         private readonly CheeseContext _context;
-        private readonly CheeseServices _cheeseServices;
+        private readonly ICloudinaryServices _cloudinaryServices;
 
-        public CheeseController(CheeseContext context)
+        public CheeseController(CheeseContext context, ICloudinaryServices cloudinaryServices)
         {
             _context = context;
-            _cheeseServices = new CheeseServices();
+            _cloudinaryServices = cloudinaryServices;
         }
 
         // GET: api/Cheese
@@ -87,7 +88,7 @@ namespace CheeseIT.Controllers
             string filepath = "";
             if (!string.IsNullOrWhiteSpace(cheese.Base64Image))
             {
-                filepath = _cheeseServices.ProcessImage(cheese.Base64Image);
+                filepath = _cloudinaryServices.ProcessImage(cheese.Base64Image);
             }
             cheese.Base64Image = filepath;
             _context.Cheeses.Add(cheese);

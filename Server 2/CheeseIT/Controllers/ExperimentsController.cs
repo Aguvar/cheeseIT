@@ -16,11 +16,13 @@ namespace CheeseIT.Controllers
     {
         private readonly CheeseContext _context;
         private readonly IExperimentServices _experimentServices;
+        private readonly ICloudinaryServices _cloudinaryServices;
 
-        public ExperimentsController(CheeseContext context, IExperimentServices experimentServices)
+        public ExperimentsController(CheeseContext context, IExperimentServices experimentServices, ICloudinaryServices cloudinaryServices)
         {
             _context = context;
             _experimentServices = experimentServices;
+            _cloudinaryServices = cloudinaryServices;
         }
 
         // GET: api/Experiments
@@ -34,7 +36,7 @@ namespace CheeseIT.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Experiment>> GetExperiment(Guid id)
         {
-            var experiment = await _context.Experiments.FindAsync(id);
+            var experiment = await _context.Experiments.Include(exp => exp.Observations).Include(exp => exp.Measurements).Where(exp => exp.Id.Equals(id)).FirstOrDefaultAsync();
 
             if (experiment == null)
             {
@@ -78,6 +80,10 @@ namespace CheeseIT.Controllers
         [HttpPost]
         public async Task<ActionResult<Experiment>> PostExperiment(Experiment experiment)
         {
+            if (await _experimentServices.GetCurrentExperiment() != null)
+            {
+                return StatusCode(412, "There is an active experiment already, please end it before starting a new one.");
+            }
             _context.Experiments.Add(experiment);
             await _context.SaveChangesAsync();
 
@@ -105,26 +111,68 @@ namespace CheeseIT.Controllers
             return _context.Experiments.Any(e => e.Id == id);
         }
 
-        // POST: api/Experiments/observation
+        // POST: api/Experiments/{id}/observations
         [HttpPost]
-        [Route("observation")]
-        public async Task<ActionResult<Observation>> PostObservation([FromBody] Observation observation)
+        [Route("{experimentId}/observations")]
+        public async Task<ActionResult<Observation>> PostObservation([FromBody] Observation observation, [FromRoute] string experimentId)
         {
+            Guid experimentGuid;
+            try
+            {
+                experimentGuid = Guid.Parse(experimentId);
+            }
+            catch (Exception)
+            {
+                return BadRequest("Malformed ID");
+            }
 
+            if (ExperimentExists(experimentGuid))
+            {
+                //Process image, if any
+                string filepath = "";
+                if (!string.IsNullOrWhiteSpace(observation.Base64Image))
+                {
+                    filepath = _cloudinaryServices.ProcessImage(observation.Base64Image);
+                }
+                observation.Base64Image = filepath;
 
-            return Ok();
+                //Add observation to experiment and save
+                Experiment experiment = await _context.Experiments.FindAsync(experimentGuid);
+
+                observation.Id = Guid.NewGuid();
+                observation.DateTime = DateTime.Now;
+
+                experiment.Observations.Add(observation);
+
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+
+                    return NotFound();
+                }
+
+                return Ok();
+            }
+            else
+            {
+                return NotFound($"No experiment with ID {experimentId}");
+            }
+
         }
 
-        // POST: api/Experiments/measure
+        // POST: api/Experiments/current/measures
         [HttpPost]
-        [Route("measure")]
+        [Route("current/measures")]
         public async Task<ActionResult<string>> PostMeasure([FromBody] Measurement measure)
         {
             Experiment currentExperiment = await _experimentServices.GetCurrentExperiment();
 
             if (currentExperiment == null)
             {
-                return StatusCode(412, "There is no active ripening");
+                return StatusCode(412, "There is no active experiment");
             }
 
             measure.DateTime = DateTime.Now;
@@ -149,7 +197,7 @@ namespace CheeseIT.Controllers
         // GET: api/Experiments/current
         [HttpGet]
         [Route("current")]
-        public async Task<ActionResult<Experiment>> GetCurrentRipening()
+        public async Task<ActionResult<Experiment>> GetCurrentExperiment()
         {
             Experiment experiment = await _experimentServices.GetCurrentExperiment();
             if (experiment != null)
@@ -158,7 +206,7 @@ namespace CheeseIT.Controllers
             }
             else
             {
-                return StatusCode(412, "There is no active ripening");
+                return StatusCode(412, "There is no active experiment");
             }
         }
 
