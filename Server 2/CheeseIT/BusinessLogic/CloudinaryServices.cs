@@ -1,24 +1,24 @@
-﻿using CloudinaryDotNet;
+﻿using CheeseIT.BusinessLogic.Interfaces;
+using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using System;
 
 namespace CheeseIT.BusinessLogic
 {
-    public class CheeseServices
+    public class CloudinaryServices : ICloudinaryServices
     {
-        internal string ProcessImage(string base64Image)
-        {
+        private readonly string cloud = "cheeseit";
+        private readonly string apiKey = "459124453776213";
+        private readonly string apiSecret = "45QvH-I2B739JpjEUZTH3XbanKM";
 
+        public string ProcessImage(string base64Image)
+        {
             Account account = new Account(
-                "cheeseit",
-                "459124453776213",
-                "45QvH-I2B739JpjEUZTH3XbanKM"
-                );
+                cloud,
+                apiKey,
+                apiSecret
+            );
 
             Cloudinary cloudinary = new Cloudinary(account);
-
-            //Decode image
-
 
             //Save it to azure blob storage or locally or in Cloudinary
 

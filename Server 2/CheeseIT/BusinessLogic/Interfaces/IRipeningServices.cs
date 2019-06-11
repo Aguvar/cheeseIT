@@ -12,7 +12,7 @@ namespace CheeseIT.BusinessLogic.Interfaces
 
         Ripening FinishRipening(Guid ripeningId);
 
-        Task<Ripening> GetCurrentRipeningModel();
+        Task<Ripening> GetCurrentRipening();
 
         void ValidateMeasure(Measurement measure);
     }

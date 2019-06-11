@@ -39,14 +39,14 @@ namespace CheeseIT.BusinessLogic
             return ripening;
         }
 
-        public async Task<Ripening> GetCurrentRipeningModel()
+        public async Task<Ripening> GetCurrentRipening()
         {
             return await _context.Ripenings.Include(rip => rip.Measurements).Include(rip => rip.Cheese).Where(r => r.EndTime == null).FirstOrDefaultAsync();
         }
 
         public void ValidateMeasure(Measurement measure)
         {
-            Cheese currentCheese = GetCurrentRipeningModel().Result.Cheese;
+            Cheese currentCheese = GetCurrentRipening().Result.Cheese;
 
             string message = "";
 
