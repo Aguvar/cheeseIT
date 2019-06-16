@@ -84,6 +84,7 @@ namespace CheeseIT.Controllers
             {
                 return StatusCode(412, "There is an active experiment already, please end it before starting a new one.");
             }
+            experiment.StartDate = DateTime.Now;
             _context.Experiments.Add(experiment);
             await _context.SaveChangesAsync();
 
