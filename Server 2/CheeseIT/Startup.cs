@@ -40,6 +40,7 @@ namespace CheeseIT
             services.AddScoped<IRipeningServices, RipeningServices>();
             services.AddScoped<IExperimentServices, ExperimentServices>();
             services.AddScoped<ICloudinaryServices, CloudinaryServices>();
+            services.AddHostedService<FinishedCheeseNotifier>();
 
             services.Configure<AppConfig>(Configuration.GetSection("AppConfig"));
         }
