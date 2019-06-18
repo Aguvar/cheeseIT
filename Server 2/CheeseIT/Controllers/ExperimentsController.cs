@@ -46,34 +46,21 @@ namespace CheeseIT.Controllers
             return experiment;
         }
 
-        // PUT: api/Experiments/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutExperiment(Guid id, Experiment experiment)
+        // POST: api/Experiments/current/end
+        [HttpPost("current/end")]
+        public async Task<IActionResult> EndCurrentExperiment()
         {
-            if (id != experiment.Id)
+            Experiment experiment = await _experimentServices.GetCurrentExperiment();
+            if (experiment == null)
             {
-                return BadRequest();
+                return StatusCode(412, "There is no active experiment");
             }
 
-            _context.Entry(experiment).State = EntityState.Modified;
+            experiment.EndTime = DateTime.Now;
+            _context.Experiments.Update(experiment);
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ExperimentExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(experiment);
         }
 
         // POST: api/Experiments
@@ -155,7 +142,7 @@ namespace CheeseIT.Controllers
                     return NotFound();
                 }
 
-                return Ok();
+                return Ok(observation);
             }
             else
             {

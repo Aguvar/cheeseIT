@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CheeseIT", "CheeseIT\CheeseIT.csproj", "{38AC1DFD-B958-4FD5-BD89-9B7BFECBF1DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusinessLogicTests", "BusinessLogicTests\BusinessLogicTests.csproj", "{3627FFA9-EC53-4E69-97C0-F17D76943AA7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

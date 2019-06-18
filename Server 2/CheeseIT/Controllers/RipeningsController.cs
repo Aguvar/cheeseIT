@@ -137,7 +137,7 @@ namespace CheeseIT.Controllers
             }
             try
             {
-                Guid cheeseGuid = Guid.Parse(body.cheeseId.Value);
+                Guid cheeseGuid = Guid.Parse(body);
                 Ripening ripening = _ripeningServices.CreateRipening(cheeseGuid);
 
                 _context.Ripenings.Add(ripening);
@@ -151,34 +151,19 @@ namespace CheeseIT.Controllers
             }
         }
 
-        [HttpPut]
-        [Route("{ripeningId}/end")]
-        public async Task<IActionResult> EndRipening(string ripeningId)
+        // POST: api/Experiments/current/end
+        [HttpPost("current/end")]
+        public async Task<IActionResult> EndCurrentRipening()
         {
-            if (!RipeningExists(Guid.Parse(ripeningId)))
+            Ripening ripening = await _ripeningServices.GetCurrentRipening();
+            if (ripening == null)
             {
-                return NotFound();
+                return StatusCode(412, "There is no active ripening");
             }
 
-            Ripening ripening = _ripeningServices.FinishRipening(Guid.Parse(ripeningId));
-
-            _context.Entry(ripening).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RipeningExists(Guid.Parse(ripeningId)))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            ripening.EndTime = DateTime.Now;
+            _context.Ripenings.Update(ripening);
+            await _context.SaveChangesAsync();
 
             return Ok(ripening);
         }
